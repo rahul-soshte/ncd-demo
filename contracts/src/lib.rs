@@ -4,29 +4,29 @@ use near_sdk::near_bindgen;
 use near_sdk::collections::{LookupMap};
 use near_sdk::json_types::ValidAccountId;
 use near_sdk::{
-    env, AccountId, Balance, CryptoHash, PanicOnDefault,
+    env, AccountId, Balance, PanicOnDefault,BorshStorageKey,
 };
-use compression::prelude::*;
-use sha256::digest_bytes;
+// use compression::prelude::*;
+// use sha256::digest_bytes;
 
 near_sdk::setup_alloc!();
 
 
 
 /// Helper structure to for keys of the persistent collections.
-#[derive(BorshSerialize)]
+#[derive(BorshStorageKey, BorshSerialize)]
 pub enum StorageKey {
     BrambleTransactions,
+    StorageDeposits,
 }
 
 
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize,PanicOnDefault)]
 pub struct Contract {
-    // SETUP CONTRACT STATE
-    pub bramble_transactions: LookupMap<String, Vec<u8>>,
+    pub bramble_transactions: LookupMap<String, Vec<String>>,
     pub owner_id: AccountId,
-
+    pub storage_deposits: LookupMap<AccountId, Balance>,
 
 }
 
@@ -38,33 +38,39 @@ impl Contract {
         let this = Self {
             bramble_transactions: LookupMap::new(StorageKey::BrambleTransactions.try_to_vec().unwrap()),
             owner_id: owner_id.into(),
+            storage_deposits: LookupMap::new(StorageKey::StorageDeposits),
 
         };
 
         this
     }
-    // ADD CONTRACT METHODS HERE
-
-    pub fn add_data(&mut self, transactiondata: String) {
+    
+    #[payable]
+    pub fn add_txn_data(&mut self, val: String, transactiondata: Vec<String>) {
         
         assert_eq!(
             &env::predecessor_account_id(),
             &self.owner_id,
             "Owner's method"
         );
-
-        let compressed1 = transactiondata.as_bytes()
-        .into_iter()
-        .cloned()
-        .encode(&mut BZip2Encoder::new(9), Action::Finish)
-        .collect::<Result<Vec<_>, _>>()
-        .unwrap();
         
-        let val = digest_bytes(&compressed1);
+        // let val = digest_bytes(&transactiondata.as_bytes());
 
-        self.bramble_transactions.insert(&val, &compressed1);
-        // compressed1
+        self.bramble_transactions.insert(&val, &transactiondata);
 
+    }
+
+    // #[payable]
+    pub fn get_txn_data(&mut self, val: String) -> Vec<String> {
+        
+        match self.bramble_transactions.get(&val) {
+            Some(value) => {
+                // let log_message = format!("Value from LookupMap is {:?}", value.clone());
+                // env::log(log_message.as_bytes());
+                value
+            },
+            None => vec!["not found".to_string()]
+          }
     }
 
 }
