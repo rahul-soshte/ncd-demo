@@ -54,13 +54,9 @@ impl Contract {
             "Owner's method"
         );
         
-        // let val = digest_bytes(&transactiondata.as_bytes());
-
         self.bramble_transactions.insert(&val, &transactiondata);
-
     }
 
-    // #[payable]
     pub fn get_txn_data(&mut self, val: String) -> Vec<String> {
         
         match self.bramble_transactions.get(&val) {

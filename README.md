@@ -13,6 +13,10 @@ Apparatus: API module, Bramble Chain, NEAR Protocol contract
 4. After the block is confirmed, Bramble chains receive confirmation and save the confirmation
  transaction as a single block
 
+## Diagram
+![Bramble-NEAR](/assets/diagram.png "Bramble-NEAR")
+
+
 ## Observations: 
 
 200 transactions saved as one block on NEAR Protocol costs approx. USD 4.8 (as per todays value)
