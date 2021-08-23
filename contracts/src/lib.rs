@@ -6,8 +6,6 @@ use near_sdk::json_types::ValidAccountId;
 use near_sdk::{
     env, AccountId, Balance, PanicOnDefault,BorshStorageKey,
 };
-// use compression::prelude::*;
-// use sha256::digest_bytes;
 
 near_sdk::setup_alloc!();
 
@@ -57,12 +55,12 @@ impl Contract {
         self.bramble_transactions.insert(&val, &transactiondata);
     }
 
-    pub fn get_txn_data(&mut self, val: String) -> Vec<String> {
+    pub fn get_txn_data(&self, val: String) -> Vec<String> {
         
         match self.bramble_transactions.get(&val) {
             Some(value) => {
-                // let log_message = format!("Value from LookupMap is {:?}", value.clone());
-                // env::log(log_message.as_bytes());
+                let log_message = format!("Value from LookupMap is {:?}", value.clone());
+                env::log(log_message.as_bytes());
                 value
             },
             None => vec!["not found".to_string()]

@@ -7,7 +7,7 @@
   "scripts": {
     "build:contracts": "cd contracts && ./build.sh && cd ../..",
     "deploy": "rm -rf neardev && (near dev-deploy || exit 0)",
-    "call_contract":"cd tests && node app1.js"
+    "call_contract":"cd scripts && node app1.js"
   },
   "engines": {
     "node": ">=12.0.0"

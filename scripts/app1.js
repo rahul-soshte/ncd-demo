@@ -68,11 +68,11 @@ const options = {
   walletUrl:   `https://wallet.${process.env.NEAR_NETWORK}.near.org`,
   helperUrl:   `https://helper.${process.env.NEAR_NETWORK}.near.org`,
   explorerUrl: `https://explorer.${process.env.NEAR_NETWORK}.near.org`,
-  accountId:   "dev-1629391926849-35015101155242",
+  accountId:   "dev-1629705968328-38910598243699",
   keyStore: keyStore
 }
 
-let contractId = "dev-1629391926849-35015101155242";
+let contractId = "dev-1629705968328-38910598243699";
 
 
 async function main() {
@@ -86,7 +86,8 @@ async function main() {
     const account_4 = await client.account("dev-1625074608971-76452383946912");
 
     const hash = sha256Hasher.update(JSON.stringify(arr)).digest("hex");
-    console.log(arr);
+    
+    //Adding the txn data
     await account.functionCall(
       contractId,
       "add_txn_data",
@@ -97,19 +98,9 @@ async function main() {
       300000000000000,
       // parseNearAmount('10'),
     )
-
-    let result = await account.functionCall(
-      contractId,
-      "get_txn_data",
-      {
-      val: hash
-      },
-      300000000000000,      // parseNearAmount('10'),
-    ) 
-
-    const jsjd = Buffer.from(result?.status?.SuccessValue, 'base64').toString('utf-8');
-    console.log(jsjd);
-  
+    
+    let result = await account.viewFunction(contractId,'get_txn_data',{'val':hash}) 
+    console.log(result);
 };
 
 main();
